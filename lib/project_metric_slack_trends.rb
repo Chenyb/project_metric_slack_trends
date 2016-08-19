@@ -1,63 +1,79 @@
 require 'slack'
 require 'rasem'
+require 'byebug'
 
 class ProjectMetricSlackTrends
 
   attr_reader :raw_data
 
-  def initialize credentials
+  def initialize credentials, raw_data = nil
+    @raw_data = raw_data
     @channel = credentials[:channel]
     @client = Slack::Web::Client.new(token: credentials[:token])
   end
 
   def refresh
     @raw_data = get_slack_trends_raw_data
-    @score = nil
+    @score = @scores = @image = nil
     true
   end
 
   def score
     refresh unless @raw_data
-    calculate_scores
-    @score = @scores["week_one"]
+    @scores ||= calculate_scores
+    @score ||= @scores["week_one"]
+  end
+
+  def raw_data= new
+    @raw_data = new
+    @score = @scores = @image = nil
   end
 
   def image
-    refresh && calculate_scores unless @raw_data
-    y_positions = []
+    refresh unless @raw_data
+    @score = calculate_scores["week_one"] unless @scores && @score
+
     max_y = 10
     min_y = 90
-    y_positions.push(min_y-@scores["week_three"]*(min_y-max_y))
-    y_positions.push(min_y-@scores["week_two"]*(min_y-max_y))
-    y_positions.push(min_y-@scores["week_one"]*(min_y-max_y))
-    img = Rasem::SVGImage.new(120,110) do
-      group :class => "grid y-grid" do
-        line(20,0,20,90)
-      end
-      group :class => "grid x-grid" do
-        line(20,90,100,90)
-      end
-      group do
-        text 0,max_y,"100", "font-size" => "10px"
-        text 0,30,"75","font-size" => "10px"
-        text 0,50,"50","font-size" => "10px"
-        text 0,70,"25","font-size" => "10px"
-        text 0,min_y,"0", "font-size" => "10px"
-      end
-      group do
-        circle 25,y_positions[0],4,"fill"=> "green"
-        line(25,y_positions[0],70,y_positions[1])
-        circle 70,y_positions[1],4,"fill"=> "green"
-        line(70,y_positions[1],115,y_positions[2])
-        circle 115,y_positions[2],4,"fill"=> "green"
-      end
-    end
-    File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
+    y_positions = calculate_positions_of_scores_on_graph(max_y,min_y)
 
-    img.output.lines.to_a[3..-1].join
+    unless @image
+      image = Rasem::SVGImage.new(120,110) do
+        group :class => "grid y-grid" do
+          line(20,0,20,90)
+        end
+        group :class => "grid x-grid" do
+          line(20,90,100,90)
+        end
+        group do
+          text 0,max_y,"100", "font-size" => "10px"
+          text 0,30,"75","font-size" => "10px"
+          text 0,50,"50","font-size" => "10px"
+          text 0,70,"25","font-size" => "10px"
+          text 0,min_y,"0", "font-size" => "10px"
+        end
+        group do
+          circle 25,y_positions[0],4,"fill"=> "green"
+          line(25,y_positions[0],70,y_positions[1])
+          circle 70,y_positions[1],4,"fill"=> "green"
+          line(70,y_positions[1],115,y_positions[2])
+          circle 115,y_positions[2],4,"fill"=> "green"
+        end
+      end
+      return @image = image.output.lines.to_a[3..-1].join
+    end
+   # File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
+    @image
   end
 
   private
+
+  def calculate_positions_of_scores_on_graph max_y, min_y
+    y_positions = []
+    y_positions.push(min_y-@scores["week_three"]*(min_y-max_y))
+    y_positions.push(min_y-@scores["week_two"]*(min_y-max_y))
+    y_positions.push(min_y-@scores["week_one"]*(min_y-max_y))
+  end
 
   def calculate_scores
     @scores = {}
@@ -95,6 +111,7 @@ class ProjectMetricSlackTrends
         @scores[week] = total_score_normalized
       end
     end
+    @scores
   end
 
   def get_slack_trends_raw_data
