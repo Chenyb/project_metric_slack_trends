@@ -27,9 +27,9 @@ class ProjectMetricSlackTrends
     y_positions = []
     max_y = 10
     min_y = 90
-    y_positions.push(min_y-@scores.values[0]*(min_y-max_y))
-    y_positions.push(min_y-@scores.values[1]*(min_y-max_y))
-    y_positions.push(min_y-@scores.values[2]*(min_y-max_y))
+    y_positions.push(min_y-@scores["week_three"]*(min_y-max_y))
+    y_positions.push(min_y-@scores["week_two"]*(min_y-max_y))
+    y_positions.push(min_y-@scores["week_one"]*(min_y-max_y))
     img = Rasem::SVGImage.new(120,110) do
       group :class => "grid y-grid" do
         line(20,0,20,90)
@@ -52,7 +52,7 @@ class ProjectMetricSlackTrends
         circle 115,y_positions[2],4,"fill"=> "green"
       end
     end
-    #File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
+    File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
 
     img.output.lines.to_a[3..-1].join
   end
