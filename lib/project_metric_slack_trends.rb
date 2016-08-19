@@ -17,6 +17,13 @@ class ProjectMetricSlackTrends
 
   def score
     refresh unless @raw_data
+    calculate_scores
+    @score = @scores["week_one"]
+  end
+
+  private
+
+  def calculate_scores
     @scores = {}
     participation_total = 20.to_f # Max score for rating participation (Based on Gini Coefficient)
     msg_frequency_total = 50.to_f # Max score for msg frequency (At least 3 msgs per day)
@@ -52,10 +59,7 @@ class ProjectMetricSlackTrends
         @scores[week] = total_score_normalized
       end
     end
-    @score = @scores["week_one"]
   end
-
-  private
 
   def get_slack_trends_raw_data
     member_names = get_member_names_for_channel
