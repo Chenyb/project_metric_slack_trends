@@ -27,9 +27,9 @@ class ProjectMetricSlackTrends
     y_positions = []
     max_y = 10
     min_y = 90
-    @scores.each do |_,v|
-      y_positions.push(min_y - v*(min_y-max_y))
-    end
+    y_positions.push(min_y-@scores.values[0]*(min_y-max_y))
+    y_positions.push(min_y-@scores.values[1]*(min_y-max_y))
+    y_positions.push(min_y-@scores.values[2]*(min_y-max_y))
     img = Rasem::SVGImage.new(120,110) do
       group :class => "grid y-grid" do
         line(20,0,20,90)
