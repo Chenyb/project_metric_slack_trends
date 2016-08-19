@@ -13,4 +13,10 @@ describe ProjectMetricSlackTrends, :vcr do
     end
   end
 
+  context '#score' do
+    it 'computes a score' do
+      expect(ProjectMetricSlackTrends.new(channel: 'projectscope', token: ENV["SLACK_API_TOKEN"]).score).to eq 0.0713333333333333
+    end
+  end
+
 end
