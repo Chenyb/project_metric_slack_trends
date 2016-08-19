@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'slack-ruby-client'
-
+gem 'rasem'
 
 group :development, :test do
   gem 'byebug'

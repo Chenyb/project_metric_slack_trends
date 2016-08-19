@@ -1,5 +1,5 @@
 require 'slack'
-require 'byebug'
+require 'rasem'
 
 class ProjectMetricSlackTrends
 
@@ -12,6 +12,7 @@ class ProjectMetricSlackTrends
 
   def refresh
     @raw_data = get_slack_trends_raw_data
+    @score = nil
     true
   end
 
@@ -19,6 +20,41 @@ class ProjectMetricSlackTrends
     refresh unless @raw_data
     calculate_scores
     @score = @scores["week_one"]
+  end
+
+  def image
+    refresh && calculate_scores unless @raw_data
+    y_positions = []
+    max_y = 10
+    min_y = 90
+    @scores.each do |_,v|
+      y_positions.push(min_y - v*(min_y-max_y))
+    end
+    img = Rasem::SVGImage.new(120,110) do
+      group :class => "grid y-grid" do
+        line(20,0,20,90)
+      end
+      group :class => "grid x-grid" do
+        line(20,90,100,90)
+      end
+      group do
+        text 0,max_y,"100", "font-size" => "10px"
+        text 0,30,"75","font-size" => "10px"
+        text 0,50,"50","font-size" => "10px"
+        text 0,70,"25","font-size" => "10px"
+        text 0,min_y,"0", "font-size" => "10px"
+      end
+      group do
+        circle 25,y_positions[0],4,"fill"=> "green"
+        line(25,y_positions[0],70,y_positions[1])
+        circle 70,y_positions[1],4,"fill"=> "green"
+        line(70,y_positions[1],115,y_positions[2])
+        circle 115,y_positions[2],4,"fill"=> "green"
+      end
+    end
+    #File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
+
+    img.output.lines.to_a[3..-1].join
   end
 
   private
