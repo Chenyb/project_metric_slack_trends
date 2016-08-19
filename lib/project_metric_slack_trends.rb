@@ -1,6 +1,5 @@
 require 'slack'
 require 'rasem'
-require 'byebug'
 
 class ProjectMetricSlackTrends
 
