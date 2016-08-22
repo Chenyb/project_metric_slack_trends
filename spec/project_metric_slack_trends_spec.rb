@@ -6,6 +6,7 @@ describe ProjectMetricSlackTrends, :vcr do
                    "week_three" => {"an_ju"=>0, "armandofox"=>10, "francis"=>0, "intfrr"=>0, "mtc2013"=>0, "tansaku"=>0,"0"=>0, "1"=>0, "2"=>0, "3"=>8, "4"=>0, "5"=>0, "6"=>0},
                    "week_two" => {"an_ju"=>0, "armandofox"=>5, "francis"=>0, "intfrr"=>0, "mtc2013"=>2, "tansaku"=>10,"0"=>1, "1"=>0, "2"=>0, "3"=>0, "4"=>5, "5"=>1, "6"=>0}}}
   let(:svg) { File.read './spec/data/sample.svg' }
+  let(:svg_wso){File.read './spec/data/wso_sample.svg'}
   context '#refresh' do
     it 'fetches raw data' do
       metric = ProjectMetricSlackTrends.new(channel: 'projectscope', token: ENV["SLACK_API_TOKEN"])
@@ -30,7 +31,7 @@ describe ProjectMetricSlackTrends, :vcr do
     it 'can handle the websiteone data' do
       metric = ProjectMetricSlackTrends.new(channel: 'websiteone', token: ENV["SLACK_API_TOKEN"])
       metric.refresh
-      expect(metric.image).to eq(svg)
+      expect(metric.image).to eq(svg_wso)
     end
   end
 

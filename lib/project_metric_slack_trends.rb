@@ -12,7 +12,7 @@ class ProjectMetricSlackTrends
 
   def refresh
     @raw_data = get_slack_trends_raw_data
-    @score = nil
+    @score = @scores = nil
     true
   end
 
@@ -23,7 +23,8 @@ class ProjectMetricSlackTrends
   end
 
   def image
-    refresh && calculate_scores unless @raw_data
+    refresh unless @raw_data
+    calculate_scores unless @scores && @score
     y_positions = []
     max_y = 10
     min_y = 90
@@ -52,7 +53,7 @@ class ProjectMetricSlackTrends
         circle 115,y_positions[2],4,"fill"=> "green"
       end
     end
-    File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
+    #File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
 
     img.output.lines.to_a[3..-1].join
   end
