@@ -26,4 +26,12 @@ describe ProjectMetricSlackTrends, :vcr do
     end
   end
 
+  context 'WebSiteOne' do
+    it 'can handle the websiteone data' do
+      metric = ProjectMetricSlackTrends.new(channel: 'websiteone', token: ENV["SLACK_API_TOKEN"])
+      metric.refresh
+      expect(metric.image).to eq(svg)
+    end
+  end
+
 end
