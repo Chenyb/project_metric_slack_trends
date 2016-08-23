@@ -1,6 +1,5 @@
 require 'slack'
 require 'rasem'
-require 'byebug'
 
 class ProjectMetricSlackTrends
 
@@ -35,29 +34,29 @@ class ProjectMetricSlackTrends
 
     max_y = 10
     min_y = 90
-    y_positions = calculate_positions_of_scores_on_graph(max_y,min_y)
+    y_positions = calculate_positions_of_scores_on_graph(max_y, min_y)
 
     unless @image
-      image = Rasem::SVGImage.new(120,110) do
+      image = Rasem::SVGImage.new(120, 110) do
         group :class => "grid y-grid" do
-          line(20,0,20,90)
+          line(20, 0, 20, 90)
         end
         group :class => "grid x-grid" do
-          line(20,90,100,90)
+          line(20, 90, 100, 90)
         end
         group do
-          text 0,max_y,"100", "font-size" => "10px"
-          text 0,30,"75","font-size" => "10px"
-          text 0,50,"50","font-size" => "10px"
-          text 0,70,"25","font-size" => "10px"
-          text 0,min_y,"0", "font-size" => "10px"
+          text 0, max_y, "100", "font-size" => "10px"
+          text 0, 30, "75", "font-size" => "10px"
+          text 0, 50, "50", "font-size" => "10px"
+          text 0, 70, "25", "font-size" => "10px"
+          text 0, min_y, "0", "font-size" => "10px"
         end
         group do
-          circle 25,y_positions[0],4,"fill"=> "green"
-          line(25,y_positions[0],70,y_positions[1])
-          circle 70,y_positions[1],4,"fill"=> "green"
-          line(70,y_positions[1],115,y_positions[2])
-          circle 115,y_positions[2],4,"fill"=> "green"
+          circle 25, y_positions[0], 4, "fill" => "green"
+          line(25, y_positions[0], 70, y_positions[1])
+          circle 70, y_positions[1], 4, "fill" => "green"
+          line(70, y_positions[1], 115, y_positions[2])
+          circle 115, y_positions[2], 4, "fill" => "green"
         end
       end
       #File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write image.output.lines.to_a[3..-1].join}
@@ -86,9 +85,9 @@ class ProjectMetricSlackTrends
 
     ["week_one", "week_two", "week_three"].each do |week|
       total_score = 0
-      num_user_messages_array = @raw_data[week].select{|k,_| !["0","1","2","3","4","5","6"].include?(k)}.map{|_,v| v}
+      num_user_messages_array = @raw_data[week].select { |k, _| !["0", "1", "2", "3", "4", "5", "6"].include?(k) }.map { |_, v| v }
       num_messages_score = num_user_messages_array.reduce(:+)
-      if num_messages_score >= num_message_threshhold  # Rates the total amount messages
+      if num_messages_score >= num_message_threshhold # Rates the total amount messages
         total_score += num_messages_total
       else
         total_score += num_messages_score*(participation_total/num_message_threshhold)
@@ -119,20 +118,20 @@ class ProjectMetricSlackTrends
     member_names = get_member_names_for_channel
     raw_data = {}
     (1..3).each do |week_number|
-      raw_data[["week_one", "week_two", "week_three"][week_number-1]] = get_week_of_slack_data(week_number,member_names)
+      raw_data[["week_one", "week_two", "week_three"][week_number-1]] = get_week_of_slack_data(week_number, member_names)
     end
     raw_data
   end
 
   def get_week_of_slack_data week_number, member_names
-    start_time = (Time.now - (7*week_number+Time.now.wday+1).days).to_s[0,10]
-    end_time = (Time.now - (7*(week_number-1)+Time.now.wday).days).to_s[0,10]
+    start_time = (Time.now - (7*week_number+Time.now.wday+1).days).to_s[0, 10]
+    end_time = (Time.now - (7*(week_number-1)+Time.now.wday).days).to_s[0, 10]
     slack_message_totals = member_names.inject({}) do |slack_message_totals, user_name|
       num_messages = @client.search_all(query: "from:#{user_name} after:#{start_time} before:#{end_time}").messages.matches.select { |m| m.channel.name == @channel }.length
       slack_message_totals.merge user_name => num_messages
     end
     (0..6).each do |day_of_week|
-      day = (Time.now - (7*week_number+Time.now.wday+day_of_week).days).to_s[0,10]
+      day = (Time.now - (7*week_number+Time.now.wday+day_of_week).days).to_s[0, 10]
       slack_message_totals[day_of_week.to_s] = @client.search_all(query: "on:#{day}").messages.matches.select { |m| m.channel.name == @channel }.length
     end
     slack_message_totals
@@ -144,11 +143,11 @@ class ProjectMetricSlackTrends
   end
 
   def gini_coefficient(array)
-    return 0.0 if array.all?{|v| v == 0}
+    return 0.0 if array.all? { |v| v == 0 }
     sorted = array.sort
     temp = 0.0
     n = sorted.length
-    array_sum = array.inject(0){|sum,x| sum + x }
+    array_sum = array.inject(0) { |sum, x| sum + x }
     (0..(n-1)).each do |i|
       temp += (n-i)*sorted[i]
     end
