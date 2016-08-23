@@ -65,7 +65,7 @@ PLATFORMS
 DEPENDENCIES
   byebug
   rake
-  rasem
+  rasem (= 0.6.1)
   rspec
   slack-ruby-client
   vcr
