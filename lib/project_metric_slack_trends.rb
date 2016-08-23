@@ -1,5 +1,6 @@
 require 'slack'
 require 'rasem'
+require 'byebug'
 
 class ProjectMetricSlackTrends
 
@@ -59,7 +60,7 @@ class ProjectMetricSlackTrends
           circle 115,y_positions[2],4,"fill"=> "green"
         end
       end
-      #File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write image.output.lines.to_a[3..-1].join}
+      File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write image.output.lines.to_a[3..-1].join}
       return @image = image.output.lines.to_a[3..-1].join
     end
     #File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
@@ -143,6 +144,7 @@ class ProjectMetricSlackTrends
   end
 
   def gini_coefficient(array)
+    return 0.0 if array.all?{|v| v == 0}
     sorted = array.sort
     temp = 0.0
     n = sorted.length
@@ -150,6 +152,6 @@ class ProjectMetricSlackTrends
     (0..(n-1)).each do |i|
       temp += (n-i)*sorted[i]
     end
-    return (n+1).to_f/ n - 2.0 * temp / ((array_sum)*n)
+    return (n+1).to_f/ n - 2.0 * temp / ((array_sum)* n)
   end
 end
