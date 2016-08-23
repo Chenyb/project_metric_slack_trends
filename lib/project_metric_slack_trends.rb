@@ -59,9 +59,10 @@ class ProjectMetricSlackTrends
           circle 115,y_positions[2],4,"fill"=> "green"
         end
       end
+      #File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write image.output.lines.to_a[3..-1].join}
       return @image = image.output.lines.to_a[3..-1].join
     end
-   # File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
+    #File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
     @image
   end
 

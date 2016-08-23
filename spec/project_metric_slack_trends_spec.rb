@@ -5,6 +5,7 @@ describe ProjectMetricSlackTrends, :vcr do
   let(:raw_data){nil}
   let(:svg) { File.read './spec/data/sample.svg' }
   let(:subject){ProjectMetricSlackTrends.new({channel: 'projectscope', token: ENV["SLACK_API_TOKEN"]},raw_data)}
+  let(:svg_wso){File.read './spec/data/wso_sample.svg'}
 
   describe '#refresh' do
 
@@ -81,4 +82,13 @@ describe ProjectMetricSlackTrends, :vcr do
       expect(subject.image).to eq svg_two
     end
   end
+
+  context 'WebSiteOne' do
+    it 'can handle the websiteone data' do
+      metric = ProjectMetricSlackTrends.new(channel: 'websiteone', token: ENV["SLACK_API_TOKEN"])
+      metric.refresh
+      expect(metric.image).to eq(svg_wso)
+    end
+  end
+
 end
