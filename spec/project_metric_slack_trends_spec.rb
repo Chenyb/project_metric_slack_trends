@@ -89,6 +89,11 @@ describe ProjectMetricSlackTrends, :vcr do
       metric.refresh
       expect(metric.image).to eq(svg_wso)
     end
+    it 'computes a proper score' do
+      metric = ProjectMetricSlackTrends.new(channel: 'websiteone', token: ENV["SLACK_API_TOKEN"])
+      metric.refresh
+      expect(metric.score).to eq(0.2)
+    end
   end
 
 end

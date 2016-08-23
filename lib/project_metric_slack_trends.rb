@@ -1,5 +1,6 @@
 require 'slack'
 require 'rasem'
+require 'byebug'
 
 class ProjectMetricSlackTrends
 
@@ -143,6 +144,7 @@ class ProjectMetricSlackTrends
   end
 
   def gini_coefficient(array)
+    return 0.0 if array.all?{|v| v == 0}
     sorted = array.sort
     temp = 0.0
     n = sorted.length
@@ -150,6 +152,6 @@ class ProjectMetricSlackTrends
     (0..(n-1)).each do |i|
       temp += (n-i)*sorted[i]
     end
-    return (n+1).to_f/ n - 2.0 * temp / ((array_sum)*n)
+    return (n+1).to_f/ n - 2.0 * temp / ((array_sum)* n)
   end
 end
