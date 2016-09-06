@@ -1,5 +1,4 @@
 require 'project_metric_slack_trends'
-require 'byebug'
 
 describe ProjectMetricSlackTrends, :vcr do
 
