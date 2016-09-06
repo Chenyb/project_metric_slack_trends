@@ -128,7 +128,7 @@ class ProjectMetricSlackTrends
     end_date = (Time.now - (7*(week_number-1)+Time.now.wday).days).to_date
     member_names_by_id = get_member_names_by_id
     id = @client.channels_list['channels'].detect { |c| c['name'] == @channel }.id
-    history = @client.channels_history(channel: id)
+    history = @client.channels_history(channel: id, count: 1000)
     slack_message_totals = history.messages.inject(Hash.new(0)) do |slack_message_totals, message|
       add_to_total = 0
       add_to_total = 1 if start_date < Time.at(message.ts.to_i).to_date && Time.at(message.ts.to_i).to_date < end_date
