@@ -11,10 +11,10 @@ describe ProjectMetricSlackTrends, :vcr do
   describe '#refresh' do
 
     context 'meaningful raw_data' do
-      let(:raw_data) { {"week_one"=>{"mtc2013"=>0, "tansaku"=>0, "jinksy"=>0, "marouen"=>1, "ksteph"=>1, "an_ju"=>1,
-                                     "armandofox"=>1, "0"=>0, "1"=>0, "2"=>0, "3"=>2, "4"=>0, "5"=>33, "6"=>23},
-                        "week_two"=>{"mtc2013"=>1, "tansaku"=>1, "jinksy"=>0, "marouen"=>0, "ksteph"=>0, "an_ju"=>0,
-                                     "armandofox"=>0, "0"=>0, "1"=>0, "2"=>0, "3"=>0, "4"=>0, "5"=>0, "6"=>0},
+      let(:raw_data) { {"week_one"=>{"mtc2013"=>8, "tansaku"=>9, "jinksy"=>0, "marouen"=>2, "ksteph"=>1, "an_ju"=>2,
+                                     "armandofox"=>2, "0"=>0, "1"=>0, "2"=>3, "3"=>5, "4"=>14, "5"=>2, "6"=>0},
+                        "week_two"=>{"mtc2013"=>26, "tansaku"=>29, "jinksy"=>0, "marouen"=>0, "ksteph"=>0, "an_ju"=>0,
+                                     "armandofox"=>0, "0"=>0, "1"=>0, "2"=>2, "3"=>0, "4"=>33, "5"=>20, "6"=>0},
                         "week_three"=>{"mtc2013"=>0, "tansaku"=>0, "jinksy"=>0, "marouen"=>0, "ksteph"=>0, "an_ju"=>0,
                                        "armandofox"=>0, "0"=>0, "1"=>0, "2"=>0, "3"=>0, "4"=>0, "5"=>0, "6"=>0}} }
       it 'fetches raw data' do
