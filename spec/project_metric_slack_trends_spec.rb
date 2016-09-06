@@ -36,7 +36,7 @@ describe ProjectMetricSlackTrends, :vcr do
       it 'unsets score' do
         expect(subject.score).to eq 0.42148777348777344
         subject.refresh
-        expect(subject.score).to eq 0.0713333333333333
+        expect(subject.score).to eq 0.32200793650793647
       end
 
       it 'unsets image' do
@@ -58,7 +58,7 @@ describe ProjectMetricSlackTrends, :vcr do
 
   describe '#score' do
     it 'computes a score' do
-      expect(ProjectMetricSlackTrends.new(channel: 'projectscope', token: ENV["SLACK_API_TOKEN"]).score).to eq 0.2651428571428572
+      expect(ProjectMetricSlackTrends.new(channel: 'projectscope', token: ENV["SLACK_API_TOKEN"]).score).to eq 0.32200793650793647
     end
   end
 
@@ -99,7 +99,7 @@ describe ProjectMetricSlackTrends, :vcr do
     it 'computes a proper score' do
       metric = ProjectMetricSlackTrends.new(channel: 'websiteone', token: ENV["SLACK_API_TOKEN"])
       metric.refresh
-      expect(metric.score).to eq(0.2)
+      expect(metric.score).to eq(0.4637265745007681)
     end
   end
 

@@ -1,6 +1,6 @@
 require 'slack'
 require 'rasem'
-require 'byebug'
+
 class ProjectMetricSlackTrends
 
   attr_reader :raw_data
