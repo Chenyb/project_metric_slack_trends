@@ -1,5 +1,6 @@
 require 'slack'
 require 'rasem'
+require 'byebug'
 
 class ProjectMetricSlackTrends
 
@@ -9,6 +10,7 @@ class ProjectMetricSlackTrends
     @raw_data = raw_data
     @channel = credentials[:channel]
     @client = Slack::Web::Client.new(token: credentials[:token])
+    Time.zone = 'UTC'
   end
 
   def refresh
@@ -124,8 +126,8 @@ class ProjectMetricSlackTrends
   end
 
   def get_week_of_slack_data week_number, member_names
-    start_date = (Time.now - (7*week_number+Time.now.wday+1).days).to_date
-    end_date = (Time.now - (7*(week_number-1)+Time.now.wday).days).to_date
+    start_date = (Time.zone.now - (7*week_number+Time.zone.now.wday+1).days).to_date
+    end_date = (Time.zone.now - (7*(week_number-1)+Time.zone.now.wday).days).to_date
     member_names_by_id = get_member_names_by_id
     id = @client.channels_list['channels'].detect { |c| c['name'] == @channel }.id
     history = @client.channels_history(channel: id, count: 1000)
@@ -135,7 +137,7 @@ class ProjectMetricSlackTrends
       slack_message_totals.merge member_names_by_id[message.user] => (slack_message_totals[member_names_by_id[message.user]]||0) + add_to_total
     end
     (1..7).each do |day_of_week|
-      day = (Time.now - (7*(week_number-1)+Time.now.wday+day_of_week).days).to_date
+      day = (Time.zone.now - (7*(week_number-1)+Time.zone.now.wday+day_of_week).days).to_date
       slack_message_totals[(day_of_week-1).to_s] = history.messages.select{|message| Time.at(message.ts.to_i).to_date == day}.length
     end
     slack_message_totals
