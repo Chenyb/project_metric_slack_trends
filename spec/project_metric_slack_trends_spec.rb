@@ -12,15 +12,15 @@ describe ProjectMetricSlackTrends, :vcr do
   describe '#refresh' do
 
     context 'meaningful raw_data' do
-      let(:raw_data) { {"week_one"=>{"mtc2013"=>8, "tansaku"=>9, "jinksy"=>0, "marouen"=>2, "ksteph"=>1, "an_ju"=>2,
-                                     "armandofox"=>2, "marianmosley"=>0, "nickn"=>0, "arun1595"=>0, "intfrr"=>0, "slackbot"=>0,
-                                     "0"=>0, "1"=>0, "2"=>3, "3"=>5, "4"=>14, "5"=>2, "6"=>0},
-                        "week_two"=>{"mtc2013"=>34, "tansaku"=>41, "jinksy"=>0, "marouen"=>0, "ksteph"=>0, "an_ju"=>0,
-                                     "armandofox"=>0, "marianmosley"=>1, "nickn"=>0, "arun1595"=>0, "intfrr"=>0, "slackbot"=>0,
-                                     "0"=>0, "1"=>0, "2"=>2, "3"=>0, "4"=>33, "5"=>41, "6"=>0},
-                        "week_three"=>{"mtc2013"=>119, "tansaku"=>128, "jinksy"=>0, "marouen"=>0, "ksteph"=>0, "an_ju"=>2,
-                                       "armandofox"=>15, "marianmosley"=>0, "nickn"=>1, "arun1595"=>2, "intfrr"=>1, "slackbot"=>1,
-                                       "0"=>0, "1"=>144, "2"=>4, "3"=>65, "4"=>7, "5"=>34, "6"=>15}} }
+      let(:raw_data) { {"week_one"=>{"mtc2013"=>8, "tansaku"=>9, "jinksy"=>0, "marouen"=>2, "ksteph"=>1, "an_ju"=>2, "armandofox"=>2,
+                                     "marianmosley"=>0, "nickn"=>0, "arun1595"=>0, "intfrr"=>0, "slackbot"=>0, "0"=>0, "1"=>0, "2"=>3,
+                                     "3"=>5, "4"=>15, "5"=>1, "6"=>0},
+                        "week_two"=>{"mtc2013"=>34, "tansaku"=>41, "jinksy"=>0, "marouen"=>0, "ksteph"=>0, "an_ju"=>0, "armandofox"=>0,
+                                     "marianmosley"=>1, "nickn"=>0, "arun1595"=>0, "intfrr"=>0, "slackbot"=>0, "0"=>0, "1"=>0, "2"=>2,
+                                     "3"=>1, "4"=>32, "5"=>41, "6"=>0},
+                        "week_three"=>{"mtc2013"=>119, "tansaku"=>128, "jinksy"=>0, "marouen"=>0, "ksteph"=>0, "an_ju"=>2, "armandofox"=>15,
+                                       "marianmosley"=>0, "nickn"=>1, "arun1595"=>2, "intfrr"=>1, "slackbot"=>1, "0"=>0, "1"=>144, "2"=>67,
+                                       "3"=>2, "4"=>17, "5"=>38, "6"=>1}} }
       it 'fetches raw data' do
         subject.refresh
         expect(subject.raw_data).to eq(raw_data)
