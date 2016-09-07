@@ -7,12 +7,20 @@ describe ProjectMetricSlackTrends, :vcr do
   let(:subject) { ProjectMetricSlackTrends.new({channel: 'projectscope', token: ENV["SLACK_API_TOKEN"]}, raw_data) }
   let(:svg_wso) { File.read './spec/data/wso_sample.svg' }
 
+  before {Time.stub_chain(:zone, :now){Time.new(2016,9,7,1,12,39,0)}}
+
   describe '#refresh' do
 
     context 'meaningful raw_data' do
-      let(:raw_data) { {"week_one" => {"an_ju" => 0, "armandofox" => 0, "francis" => 0, "intfrr" => 0, "mtc2013" => 19, "tansaku" => 0, "0" => 0, "1" => 0, "2" => 0, "3" => 0, "4" => 1, "5" => 0, "6" => 0},
-                        "week_three" => {"an_ju" => 0, "armandofox" => 10, "francis" => 0, "intfrr" => 0, "mtc2013" => 0, "tansaku" => 0, "0" => 0, "1" => 0, "2" => 0, "3" => 8, "4" => 0, "5" => 0, "6" => 0},
-                        "week_two" => {"an_ju" => 0, "armandofox" => 5, "francis" => 0, "intfrr" => 0, "mtc2013" => 2, "tansaku" => 10, "0" => 1, "1" => 0, "2" => 0, "3" => 0, "4" => 5, "5" => 1, "6" => 0}} }
+      let(:raw_data) { {"week_one"=>{"mtc2013"=>8, "tansaku"=>9, "jinksy"=>0, "marouen"=>2, "ksteph"=>1, "an_ju"=>2, "armandofox"=>2,
+                                     "marianmosley"=>0, "nickn"=>0, "arun1595"=>0, "intfrr"=>0, "slackbot"=>0, "0"=>0, "1"=>0, "2"=>3,
+                                     "3"=>5, "4"=>15, "5"=>1, "6"=>0},
+                        "week_two"=>{"mtc2013"=>34, "tansaku"=>41, "jinksy"=>0, "marouen"=>0, "ksteph"=>0, "an_ju"=>0, "armandofox"=>0,
+                                     "marianmosley"=>1, "nickn"=>0, "arun1595"=>0, "intfrr"=>0, "slackbot"=>0, "0"=>0, "1"=>0, "2"=>2,
+                                     "3"=>1, "4"=>32, "5"=>41, "6"=>0},
+                        "week_three"=>{"mtc2013"=>119, "tansaku"=>128, "jinksy"=>0, "marouen"=>0, "ksteph"=>0, "an_ju"=>2, "armandofox"=>15,
+                                       "marianmosley"=>0, "nickn"=>1, "arun1595"=>2, "intfrr"=>1, "slackbot"=>1, "0"=>0, "1"=>144, "2"=>67,
+                                       "3"=>2, "4"=>17, "5"=>38, "6"=>1}} }
       it 'fetches raw data' do
         subject.refresh
         expect(subject.raw_data).to eq(raw_data)
@@ -29,7 +37,7 @@ describe ProjectMetricSlackTrends, :vcr do
       it 'unsets score' do
         expect(subject.score).to eq 0.42148777348777344
         subject.refresh
-        expect(subject.score).to eq 0.0713333333333333
+        expect(subject.score).to eq 0.32200793650793647
       end
 
       it 'unsets image' do
@@ -51,7 +59,7 @@ describe ProjectMetricSlackTrends, :vcr do
 
   describe '#score' do
     it 'computes a score' do
-      expect(ProjectMetricSlackTrends.new(channel: 'projectscope', token: ENV["SLACK_API_TOKEN"]).score).to eq 0.0713333333333333
+      expect(ProjectMetricSlackTrends.new(channel: 'projectscope', token: ENV["SLACK_API_TOKEN"]).score).to eq 0.32200793650793647
     end
   end
 
@@ -92,7 +100,7 @@ describe ProjectMetricSlackTrends, :vcr do
     it 'computes a proper score' do
       metric = ProjectMetricSlackTrends.new(channel: 'websiteone', token: ENV["SLACK_API_TOKEN"])
       metric.refresh
-      expect(metric.score).to eq(0.2)
+      expect(metric.score).to eq(0.4637265745007681)
     end
   end
 

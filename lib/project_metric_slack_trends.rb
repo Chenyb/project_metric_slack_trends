@@ -9,6 +9,7 @@ class ProjectMetricSlackTrends
     @raw_data = raw_data
     @channel = credentials[:channel]
     @client = Slack::Web::Client.new(token: credentials[:token])
+    Time.zone = 'UTC'
   end
 
   def refresh
@@ -59,7 +60,7 @@ class ProjectMetricSlackTrends
           circle 115, y_positions[2], 4, "fill" => "green"
         end
       end
-      #File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write image.output.lines.to_a[3..-1].join}
+      File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write image.output.lines.to_a[3..-1].join}
       return @image = image.output.lines.to_a[3..-1].join
     end
     #File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
@@ -124,15 +125,19 @@ class ProjectMetricSlackTrends
   end
 
   def get_week_of_slack_data week_number, member_names
-    start_time = (Time.now - (7*week_number+Time.now.wday+1).days).to_s[0, 10]
-    end_time = (Time.now - (7*(week_number-1)+Time.now.wday).days).to_s[0, 10]
-    slack_message_totals = member_names.inject({}) do |slack_message_totals, user_name|
-      num_messages = @client.search_all(query: "from:#{user_name} after:#{start_time} before:#{end_time}").messages.matches.select { |m| m.channel.name == @channel }.length
-      slack_message_totals.merge user_name => num_messages
+    start_date = (Time.zone.now - (7*week_number+Time.zone.now.wday+1).days).to_date
+    end_date = (Time.zone.now - (7*(week_number-1)+Time.zone.now.wday).days).to_date
+    member_names_by_id = get_member_names_by_id
+    id = @client.channels_list['channels'].detect { |c| c['name'] == @channel }.id
+    history = @client.channels_history(channel: id, count: 1000)
+    slack_message_totals = history.messages.inject(Hash.new(0)) do |slack_message_totals, message|
+      add_to_total = 0
+      add_to_total = 1 if start_date < Time.at(message.ts.to_i).utc.to_date && Time.at(message.ts.to_i).utc.to_date < end_date
+      slack_message_totals.merge member_names_by_id[message.user] => (slack_message_totals[member_names_by_id[message.user]]||0) + add_to_total
     end
-    (0..6).each do |day_of_week|
-      day = (Time.now - (7*week_number+Time.now.wday+day_of_week).days).to_s[0, 10]
-      slack_message_totals[day_of_week.to_s] = @client.search_all(query: "on:#{day}").messages.matches.select { |m| m.channel.name == @channel }.length
+    (1..7).each do |day_of_week|
+      day = (Time.zone.now - (7*(week_number-1)+Time.zone.now.wday+day_of_week).days).to_date
+      slack_message_totals[(day_of_week-1).to_s] = history.messages.select{|message| Time.at(message.ts.to_i).utc.to_date == day}.length
     end
     slack_message_totals
   end
@@ -140,6 +145,13 @@ class ProjectMetricSlackTrends
   def get_member_names_for_channel
     members = @client.channels_list['channels'].detect { |c| c['name']== @channel }.members
     @client.users_list.members.select { |u| members.include? u.id }.map { |u| u.name }
+  end
+
+  def get_member_names_by_id
+    members = @client.users_list.members
+    members.inject({}) do |collection, member|
+      collection.merge member.id => member.name
+    end
   end
 
   def gini_coefficient(array)
