@@ -7,6 +7,8 @@ describe ProjectMetricSlackTrends, :vcr do
   let(:subject) { ProjectMetricSlackTrends.new({channel: 'projectscope', token: ENV["SLACK_API_TOKEN"]}, raw_data) }
   let(:svg_wso) { File.read './spec/data/wso_sample.svg' }
 
+  before {Time.stub_chain(:zone, :now){Time.new(2016,9,7,1,12,39,0)}}
+
   describe '#refresh' do
 
     context 'meaningful raw_data' do
