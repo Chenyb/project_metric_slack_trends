@@ -1,6 +1,5 @@
 require 'slack'
 require 'rasem'
-require 'byebug'
 
 class ProjectMetricSlackTrends
 
@@ -133,12 +132,12 @@ class ProjectMetricSlackTrends
     history = @client.channels_history(channel: id, count: 1000)
     slack_message_totals = history.messages.inject(Hash.new(0)) do |slack_message_totals, message|
       add_to_total = 0
-      add_to_total = 1 if start_date < Time.at(message.ts.to_i).to_date && Time.at(message.ts.to_i).to_date < end_date
+      add_to_total = 1 if start_date < Time.at(message.ts.to_i).utc.to_date && Time.at(message.ts.to_i).utc.to_date < end_date
       slack_message_totals.merge member_names_by_id[message.user] => (slack_message_totals[member_names_by_id[message.user]]||0) + add_to_total
     end
     (1..7).each do |day_of_week|
       day = (Time.zone.now - (7*(week_number-1)+Time.zone.now.wday+day_of_week).days).to_date
-      slack_message_totals[(day_of_week-1).to_s] = history.messages.select{|message| Time.at(message.ts.to_i).to_date == day}.length
+      slack_message_totals[(day_of_week-1).to_s] = history.messages.select{|message| Time.at(message.ts.to_i).utc.to_date == day}.length
     end
     slack_message_totals
   end
