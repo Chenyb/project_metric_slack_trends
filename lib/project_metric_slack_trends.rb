@@ -33,23 +33,23 @@ class ProjectMetricSlackTrends
     refresh unless @raw_data
     @score = calculate_scores["week_one"] unless @scores && @score
 
-    max_y = 10
-    min_y = 90
+    max_y = 15
+    min_y = 95
     y_positions = calculate_positions_of_scores_on_graph(max_y, min_y)
 
     unless @image
-      image = Rasem::SVGImage.new(120, 110) do
+      image = Rasem::SVGImage.new(120, 100) do
         group :class => "grid y-grid" do
-          line(20, 0, 20, 90)
+          line(20, 0, 20, 95)
         end
         group :class => "grid x-grid" do
-          line(20, 90, 100, 90)
+          line(20, 95, 120, 95)
         end
         group do
           text 0, max_y, "100", "font-size" => "10px"
-          text 0, 30, "75", "font-size" => "10px"
-          text 0, 50, "50", "font-size" => "10px"
-          text 0, 70, "25", "font-size" => "10px"
+          text 0, 35, "75", "font-size" => "10px"
+          text 0, 55, "50", "font-size" => "10px"
+          text 0, 75, "25", "font-size" => "10px"
           text 0, min_y, "0", "font-size" => "10px"
         end
         group do
@@ -63,7 +63,7 @@ class ProjectMetricSlackTrends
       File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write image.output.lines.to_a[3..-1].join}
       return @image = image.output.lines.to_a[3..-1].join
     end
-    #File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
+    File.open(File.join(File.dirname(__FILE__), 'sample.svg'), 'w'){|f| f.write img.output.lines.to_a[3..-1].join}
     @image
   end
 
