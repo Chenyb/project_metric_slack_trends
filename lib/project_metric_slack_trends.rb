@@ -165,4 +165,9 @@ class ProjectMetricSlackTrends
     end
     return (n+1).to_f/ n - 2.0 * temp / ((array_sum)* n)
   end
+
+  def self.credentials
+    ['token','channel']
+  end
+
 end
