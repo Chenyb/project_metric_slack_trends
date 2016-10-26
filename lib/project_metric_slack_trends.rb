@@ -67,6 +67,10 @@ class ProjectMetricSlackTrends
     @image
   end
 
+  def self.credentials
+    [:token,:channel]
+  end
+
   private
 
   def calculate_positions_of_scores_on_graph max_y, min_y
