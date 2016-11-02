@@ -132,7 +132,7 @@ class ProjectMetricSlackTrends
     start_date = (Time.zone.now - (7*week_number+Time.zone.now.wday+1).days).to_date
     end_date = (Time.zone.now - (7*(week_number-1)+Time.zone.now.wday).days).to_date
     member_names_by_id = get_member_names_by_id
-    id = @client.channels_list['channels'].detect { |c| c['name'] == @channel }.id
+    id = @client.channels.list['channels'].detect { |c| c['name'] == @channel }.id
     history = @client.channels_history(channel: id, count: 1000)
     slack_message_totals = history.messages.inject(Hash.new(0)) do |slack_message_totals, message|
       add_to_total = 0
@@ -147,12 +147,12 @@ class ProjectMetricSlackTrends
   end
 
   def get_member_names_for_channel
-    members = @client.channels_list['channels'].detect { |c| c['name']== @channel }.members
-    @client.users_list.members.select { |u| members.include? u.id }.map { |u| u.name }
+    members = @client.channels.list['channels'].detect { |c| c['name']== @channel }.members
+    @client.users.list.members.select { |u| members.include? u.id }.map { |u| u.name }
   end
 
   def get_member_names_by_id
-    members = @client.users_list.members
+    members = @client.users.list.members
     members.inject({}) do |collection, member|
       collection.merge member.id => member.name
     end
