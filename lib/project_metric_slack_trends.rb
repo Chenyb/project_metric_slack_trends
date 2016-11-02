@@ -147,7 +147,7 @@ class ProjectMetricSlackTrends
   end
 
   def get_member_names_for_channel
-    members = @client.channels_list['channels'].detect { |c| c['name']== @channel }.members
+    members = @client.channels_list['channels_id'].detect { |c| c['name']== @channel }.members
     @client.users.list.members.select { |u| members.include? u.id }.map { |u| u.name }
   end
 
